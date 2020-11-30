@@ -8,7 +8,8 @@ const FRICTION = 650
 enum {
 	MOVE,
 	ROLL,
-	ATTACK
+	ATTACK,
+	DEATH
 }
 
 var state = MOVE
@@ -36,6 +37,8 @@ func _process(delta):
 			roll_state(delta)
 		ATTACK:
 			attack_state(delta)
+		DEATH:
+			pass
 
 func move_state(delta):
 	var input_vector = Vector2.ZERO
@@ -75,6 +78,11 @@ func attack_state(delta):
 	animationState.travel("Attack")
 	move()
 
+func death_state(delta):
+	velocity = velocity * 0.5
+	animationState.travel("Death")
+	move()
+
 func move():
 	velocity = move_and_slide(velocity)
 	#print(velocity)
@@ -85,6 +93,8 @@ func roll_animation_finished():
 func attack_animation_finished():
 	state = MOVE
 
+func death_animation_finished():
+	queue_free()
 
 func _on_Hurtbox_area_entered(area):
 	stats.health -= 1
