@@ -1,5 +1,7 @@
 extends KinematicBody2D
 
+const PLAYERHURTSOUND = preload("res://Player/PlayerHurtSound.tscn")
+
 const ACCELERATION = 800
 const MAX_SPEED = 100
 const ROLL_SPEED = 125
@@ -22,6 +24,7 @@ onready var animationTree = $AnimationTree
 onready var animationState = animationTree.get("parameters/playback")
 onready var swordHitbox = $HitboxPivot/SwordHitbox
 onready var hurtbox = $Hurtbox
+onready var blinkAnimationPlayer = $BlinkAnimationPlayer
 
 func _ready():
 	randomize()
@@ -97,6 +100,14 @@ func death_animation_finished():
 	queue_free()
 
 func _on_Hurtbox_area_entered(area):
-	stats.health -= 1
+	stats.health -= area.damage
 	hurtbox.start_invincibility(0.5)
 	hurtbox.create_hit_effect(area)
+	var playerHurtSounds = PLAYERHURTSOUND.instance()
+	get_tree().current_scene.add_child(playerHurtSounds)
+
+func _on_Hurtbox_invincibility_started():
+	blinkAnimationPlayer.play("Start")
+
+func _on_Hurtbox_invincibility_ended():
+	blinkAnimationPlayer.play("Stop")
