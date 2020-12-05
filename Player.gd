@@ -28,7 +28,7 @@ onready var blinkAnimationPlayer = $BlinkAnimationPlayer
 
 func _ready():
 	randomize()
-	stats.connect("no_health", self, "queue_free")
+	stats.connect("no_health", self, "start_death")
 	animationTree.active = true
 	swordHitbox.knockback_vector = roll_vector
 
@@ -41,7 +41,7 @@ func _process(delta):
 		ATTACK:
 			attack_state(delta)
 		DEATH:
-			pass
+			death_state(delta)
 
 func move_state(delta):
 	var input_vector = Vector2.ZERO
@@ -57,6 +57,7 @@ func move_state(delta):
 		animationTree.set("parameters/Run/blend_position", input_vector)
 		animationTree.set("parameters/Attack/blend_position", input_vector)
 		animationTree.set("parameters/Roll/blend_position", input_vector)
+		animationTree.set("parameters/Knocked/blend_position", input_vector)
 		animationState.travel("Run")
 		velocity = velocity.move_toward(input_vector * MAX_SPEED, ACCELERATION * delta)
 	else:
@@ -82,19 +83,25 @@ func attack_state(delta):
 	move()
 
 func death_state(delta):
-	velocity = velocity * 0.5
-	animationState.travel("Death")
+	animationState.travel("Knocked")
 	move()
+	print(velocity)
 
 func move():
 	velocity = move_and_slide(velocity)
-	#print(velocity)
+	print(velocity)
 
 func roll_animation_finished():
 	state = MOVE
 
 func attack_animation_finished():
 	state = MOVE
+
+func start_death():
+	state = DEATH
+	print("ded SJFKDSLFJLSKFJDLSKFJLSFJ")
+	velocity = velocity * (roll_vector * -1)
+	$Hurtbox._on_Hurtbox_invincibility_started()
 
 func death_animation_finished():
 	queue_free()

@@ -1061,7 +1061,7 @@ material = SubResource( 1 )
 position = Vector2( 1, -9 )
 texture = ExtResource( 2 )
 hframes = 60
-frame = 56
+frame = 36
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( -1.90735e-05, 0 )
@@ -1095,8 +1095,8 @@ tree_root = SubResource( 56 )
 anim_player = NodePath("../AnimationPlayer")
 parameters/playback = SubResource( 57 )
 parameters/Attack/blend_position = Vector2( 0, 1 )
-parameters/Idle/blend_position = Vector2( 0, 1 )
-parameters/Knocked/blend_position = Vector2( 0.0203562, 0.92931 )
+parameters/Idle/blend_position = Vector2( 0.330789, -0.00948286 )
+parameters/Knocked/blend_position = Vector2( -0.0279898, -0.161207 )
 parameters/Roll/blend_position = Vector2( 0, 1 )
 parameters/Run/blend_position = Vector2( 0, 1 )
 
@@ -1120,9 +1120,10 @@ collision_layer = 4
 [node name="CollisionShape2D" parent="Hurtbox" index="0"]
 position = Vector2( 0.749153, -5.43136 )
 shape = SubResource( 59 )
+disabled = true
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 8 )
+stream = ExtResource( 6 )
 
 [node name="BlinkAnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Start = SubResource( 60 )
