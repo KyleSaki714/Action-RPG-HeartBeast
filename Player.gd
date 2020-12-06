@@ -18,6 +18,7 @@ var state = MOVE
 var velocity = Vector2.ZERO
 var roll_vector = Vector2.DOWN
 var stats = PlayerStats
+var control_state = 0 # 0 keyborad, 1 touch
 
 onready var animationPlayer = $AnimationPlayer
 onready var animationTree = $AnimationTree
@@ -25,6 +26,9 @@ onready var animationState = animationTree.get("parameters/playback")
 onready var swordHitbox = $HitboxPivot/SwordHitbox
 onready var hurtbox = $Hurtbox
 onready var blinkAnimationPlayer = $BlinkAnimationPlayer
+onready var joystick = get_parent().get_parent().get_node("CanvasLayer/TouchControls/Joystick/JoystickButton")
+# touchscreen buttons are signaling up
+onready var touchControls = get_parent().get_parent().get_node("CanvasLayer/TouchControls")
 
 func _ready():
 	randomize()
@@ -43,12 +47,34 @@ func _process(delta):
 		DEATH:
 			death_state(delta)
 
+func _input(event):
+	if event is InputEventScreenTouch:
+		control_state = 1
+		touchControls.visible = true
+		
+	if event is InputEventKey:
+		control_state = 0
+		touchControls.visible = false
+
 func move_state(delta):
 	var input_vector = Vector2.ZERO
-	input_vector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
-	input_vector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-	input_vector = input_vector.normalized()
-	#print(input_vector)
+	#input vector handler
+	match control_state:
+		0: # keyborat
+			
+			input_vector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+			input_vector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+			input_vector = input_vector.normalized()
+			print(input_vector)
+			
+			if Input.is_action_just_pressed("roll"):
+				state = ROLL
+			
+			if Input.is_action_just_pressed("attack"):
+				state = ATTACK
+		1: # touch
+			input_vector = joystick.get_value()
+			print(input_vector)
 	
 	if input_vector != Vector2.ZERO:
 		roll_vector = input_vector
@@ -66,11 +92,7 @@ func move_state(delta):
 	
 	move()
 	
-	if Input.is_action_just_pressed("roll"):
-		state = ROLL
 	
-	if Input.is_action_just_pressed("attack"):
-		state = ATTACK
 
 func roll_state(delta):
 	velocity = roll_vector * MAX_SPEED * 1.2
@@ -85,11 +107,11 @@ func attack_state(delta):
 func death_state(delta):
 	animationState.travel("Knocked")
 	move()
-	print(velocity)
+	#print(velocity)
 
 func move():
 	velocity = move_and_slide(velocity)
-	print(velocity)
+	#print(velocity)
 
 func roll_animation_finished():
 	state = MOVE
@@ -118,3 +140,10 @@ func _on_Hurtbox_invincibility_started():
 
 func _on_Hurtbox_invincibility_ended():
 	blinkAnimationPlayer.play("Stop")
+
+
+func _on_BtnAtk_pressed():
+	state = ATTACK
+
+func _on_BtnRoll_pressed():
+	state = ROLL
