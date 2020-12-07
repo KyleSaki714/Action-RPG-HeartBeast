@@ -7,6 +7,8 @@ const MAX_SPEED = 100
 const ROLL_SPEED = 125
 const FRICTION = 650
 
+signal after_death
+
 enum {
 	MOVE,
 	ROLL,
@@ -29,11 +31,14 @@ onready var blinkAnimationPlayer = $BlinkAnimationPlayer
 onready var joystick = get_parent().get_parent().get_node("CanvasLayer/TouchControls/Joystick/JoystickButton")
 # touchscreen buttons are signaling up
 onready var touchControls = get_parent().get_parent().get_node("CanvasLayer/TouchControls")
+onready var deathScreen = get_parent().get_parent().get_node("CanvasLayer/DeathScreen")
 
 func _ready():
 	randomize()
 	stats.connect("no_health", self, "start_death")
+	touchControls.visible = false
 	animationTree.active = true
+	deathScreen.visible = false
 	swordHitbox.knockback_vector = roll_vector
 
 func _process(delta):
@@ -126,6 +131,10 @@ func start_death():
 	$Hurtbox._on_Hurtbox_invincibility_started()
 
 func death_animation_finished():
+	emit_signal("after_death")
+	deathScreen.visible = true
+	deathScreen.get_child(0).visible = true
+	deathScreen.get_child(1).visible = true
 	queue_free()
 
 func _on_Hurtbox_area_entered(area):
@@ -147,3 +156,4 @@ func _on_BtnAtk_pressed():
 
 func _on_BtnRoll_pressed():
 	state = ROLL
+
