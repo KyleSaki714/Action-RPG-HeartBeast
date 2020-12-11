@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Camera2D.gd" type="Script" id=1]
+[ext_resource path="res://UI/ScreenShake.tscn" type="PackedScene" id=2]
 
 [node name="Camera2D" type="Camera2D"]
 position = Vector2( 200, 168 )
@@ -21,3 +22,5 @@ position = Vector2( -64, -64 )
 
 [node name="BottomRight" type="Position2D" parent="Limits"]
 position = Vector2( 448, 256 )
+
+[node name="ScreenShake" parent="." instance=ExtResource( 2 )]

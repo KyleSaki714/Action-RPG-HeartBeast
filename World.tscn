@@ -1,4 +1,4 @@
-[gd_scene load_steps=69 format=2]
+[gd_scene load_steps=72 format=2]
 
 [ext_resource path="res://World/Bush.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
@@ -13,6 +13,8 @@
 [ext_resource path="res://UI/JoystickArea.tscn" type="PackedScene" id=11]
 [ext_resource path="res://UI/Button.tscn" type="PackedScene" id=12]
 [ext_resource path="res://Button.gd" type="Script" id=13]
+[ext_resource path="res://icon.png" type="Texture" id=15]
+[ext_resource path="res://Hitboxes and Hurtboxes/Hitbox.tscn" type="PackedScene" id=16]
 
 [sub_resource type="TileSet" id=1]
 0/name = "DirtTileset.png 0"
@@ -542,6 +544,8 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 } ]
 0/z_index = 0
 
+[sub_resource type="RectangleShape2D" id=56]
+
 [node name="World" type="Node2D"]
 
 [node name="GrassBackground" type="Sprite" parent="."]
@@ -564,7 +568,7 @@ format = 1
 tile_data = PoolIntArray( -131066, 0, 0, -131065, 0, 1, -131064, 0, 1, -131063, 0, 1, -131062, 0, 1, -131061, 0, 2, -65530, 0, 131072, -65529, 0, 131073, -65528, 0, 65542, -65527, 0, 65537, -65526, 0, 65537, -65525, 0, 65538, 8, 0, 65536, 9, 0, 65537, 10, 0, 65537, 11, 0, 262149, 12, 0, 196610, 131070, 0, 0, 131071, 0, 1, 65536, 0, 2, 65544, 0, 131072, 65545, 0, 65542, 65546, 0, 65537, 65547, 0, 65538, 196606, 0, 65536, 196607, 0, 65537, 131072, 0, 65538, 131081, 0, 65536, 131082, 0, 65537, 131083, 0, 65538, 262142, 0, 65536, 262143, 0, 65537, 196608, 0, 131077, 196609, 0, 1, 196610, 0, 2, 196617, 0, 65536, 196618, 0, 65537, 196619, 0, 65538, 327678, 0, 65536, 327679, 0, 65537, 262144, 0, 65537, 262145, 0, 65537, 262146, 0, 131077, 262147, 0, 1, 262148, 0, 1, 262149, 0, 2, 262153, 0, 131072, 262154, 0, 131073, 262155, 0, 131074, 393214, 0, 65536, 393215, 0, 65537, 327680, 0, 65537, 327681, 0, 65537, 327682, 0, 65537, 327683, 0, 65537, 327684, 0, 65537, 327685, 0, 131077, 327686, 0, 2, 458750, 0, 131072, 458751, 0, 131073, 393216, 0, 131073, 393217, 0, 131073, 393218, 0, 131073, 393219, 0, 131073, 393220, 0, 131073, 393221, 0, 131073, 393222, 0, 131074, 393225, 0, 3, 458761, 0, 65539, 524297, 0, 131075, 589832, 0, 196611, 589834, 0, 196611 )
 
 [node name="Camera2D" parent="." instance=ExtResource( 10 )]
-position = Vector2( 160, 16 )
+position = Vector2( 64, 16 )
 
 [node name="YSort" type="YSort" parent="."]
 
@@ -634,6 +638,20 @@ position = Vector2( 104, 48 )
 [node name="Bat2" parent="YSort" instance=ExtResource( 7 )]
 position = Vector2( 224, 144 )
 
+[node name="TestThing" type="Node2D" parent="YSort"]
+position = Vector2( 480, 224 )
+
+[node name="Sprite" type="Sprite" parent="YSort/TestThing"]
+scale = Vector2( 0.375, 0.375 )
+texture = ExtResource( 15 )
+
+[node name="Hitbox" parent="YSort/TestThing" instance=ExtResource( 16 )]
+collision_mask = 4
+damage = 0
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="YSort/TestThing/Hitbox"]
+shape = SubResource( 56 )
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="HealthUI" parent="CanvasLayer" instance=ExtResource( 8 )]
@@ -681,6 +699,10 @@ margin_right = 232.0
 margin_bottom = 92.0
 text = "try again"
 script = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="area_entered" from="YSort/TestThing/Hitbox" to="Camera2D" method="_on_Hitbox_area_entered"]
 [connection signal="pressed" from="CanvasLayer/TouchControls/BtnAtk" to="YSort/Player" method="_on_BtnAtk_pressed"]
 [connection signal="pressed" from="CanvasLayer/TouchControls/BtnRoll" to="YSort/Player" method="_on_BtnRoll_pressed"]
 [connection signal="button_down" from="CanvasLayer/DeathScreen/Button" to="CanvasLayer/DeathScreen/Button" method="_on_Button_button_down"]

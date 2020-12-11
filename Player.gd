@@ -70,7 +70,7 @@ func move_state(delta):
 			input_vector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 			input_vector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 			input_vector = input_vector.normalized()
-			print(input_vector)
+			#print(input_vector)
 			
 			if Input.is_action_just_pressed("roll"):
 				state = ROLL
@@ -79,7 +79,7 @@ func move_state(delta):
 				state = ATTACK
 		1: # touch
 			input_vector = joystick.get_value()
-			print(input_vector)
+			#print(input_vector)
 	
 	if input_vector != Vector2.ZERO:
 		roll_vector = input_vector
